@@ -21,7 +21,7 @@ def index_page(phone: str = Form(...)):
     return Response(result, media_type='text/html')
 
 
-@app.post("/unify_phone_from_query")
+@app.get("/unify_phone_from_query")
 def index_page(phone: str):
     """Преобразование телефона к стандартизированному виду из query params"""
     result = unify_phone(phone=phone)
