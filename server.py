@@ -28,7 +28,7 @@ def index_page(phone: str):
     return Response(result, media_type='text/html')
 
 
-@app.post("/unify_phone_from_cookies")
+@app.get("/unify_phone_from_cookies")
 def index_page(phone: Union[str, None] = Cookie(default=None)):
     """Преобразование телефона к стандартизированному виду из query params"""
     result = unify_phone(phone=phone)
