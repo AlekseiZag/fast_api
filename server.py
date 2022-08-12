@@ -1,24 +1,35 @@
-from fastapi import FastAPI, Body
+from typing import Union
 from starlette.responses import Response
+from fastapi import FastAPI, Body, Form, Cookie
+
+from services import unify_phone
 
 app = FastAPI()
 
 
 @app.post("/unify_phone_from_json")
-def index_page(phone=Body(...)):
-    """Преобразование номера телефона к стандартизированному виду"""
-    digits = []
-    phone = phone.get("phone")
-    if phone:
-        for char in phone:
-            if char.isdecimal():
-                digits.append(char)
-        if len(digits) == 10 and digits[0] == '9':
-            digits.insert(0, '8')
-        if len(digits) == 11:
-            if digits[0] == '7':
-                digits[0] = '8'
-            result = f'{digits[0]} ({"".join(digits[1:4])}) {"".join(digits[4:7])}-{digits[7]}{digits[8]}-{digits[9]}{digits[10]}'
-        else:
-            result = ''.join(digits)
-        return Response(result, media_type='text/html')
+def index_page(body=Body(...)):
+    """Преобразование телефона к стандартизированному виду из JSON"""
+    result = unify_phone(phone=body.get('phone'))
+    return Response(result, media_type='text/html')
+
+
+@app.post("/unify_phone_from_form")
+def index_page(phone: str = Form(...)):
+    """Преобразование телефона к стандартизированному виду из формы"""
+    result = unify_phone(phone=phone)
+    return Response(result, media_type='text/html')
+
+
+@app.post("/unify_phone_from_query")
+def index_page(phone: str):
+    """Преобразование телефона к стандартизированному виду из query params"""
+    result = unify_phone(phone=phone)
+    return Response(result, media_type='text/html')
+
+
+@app.post("/unify_phone_from_cookies")
+def index_page(phone: Union[str, None] = Cookie(default=None)):
+    """Преобразование телефона к стандартизированному виду из query params"""
+    result = unify_phone(phone=phone)
+    return Response(result, media_type='text/html')
